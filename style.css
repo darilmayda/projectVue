@@ -1,0 +1,19 @@
+
+.active {
+	background: salmon;
+	border: 0;
+	padding: 5px
+}
+.header {
+	height: 50px;
+    background: #bddbc3;
+    display: flex
+}
+
+.error{
+	color: red
+
+}
+.input-group{
+	margin-bottom: 5px
+}

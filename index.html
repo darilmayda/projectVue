@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Belajar Vue JS</title>
+</head>
+<link rel="stylesheet"  href="style.css">
+<body>
+
+<div id="app">
+
+	<!--memanggil komponen header -->
+	<header-component nama="VueJs"></header-component>
+	<nav>
+		<router-link to="/">Home</router-link>
+    	<router-link to="/about">About</router-link>
+    	<router-link to="/kelas">Kelas</router-link>
+	</nav>
+
+	<main>
+		 <!-- induk komunikasi ke anak melakukan sintax properti -->
+		<!-- <kelas-component v-bind:items="kelas" :input="kelasbaru" v-on:hapuskelas="hapuskelas"></kelas-component> -->
+
+		<!-- emit submit data -->
+		<!-- 		<kelas-component v-bind:items="kelas" v-on:submitkelas="submitkelas" v-on:hapuskelas="hapuskelas"></kelas-component>
+				<home></home> -->
+
+		<!-- singlepage application bisa mengubah"konten-->
+		<router-view v-bind:items="kelas" v-on:submitkelas="submitkelas" v-on:hapuskelas="hapuskelas"></router-view>
+	</main>
+
+	<!--memanggil komponen footer -->
+	<footer-component>
+		Copyright 2021 - darilmayda
+	</footer-component>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+<script src="firebase.js"></script>
+<script src="components.js"></script>
+<script src="router.js"></script>
+<script>
+
+	//komponen Induk
+	const vm = new Vue({
+		el : '#app',
+		router,
+		components :{
+			'home' : home
+		},
+		data : {
+			// kelas : [
+		 //  		{
+		 //  			id : '1',
+		 //  			judul : 'Buku A',
+		 //  			deskripsi: 'Buku ini Buku A',
+		 //  			gambar : 'face23.jpg'
+
+			//   	},{
+			//   	    id : '2',
+		 //  			judul : 'Buku B',
+		 //  			deskripsi: 'Buku ini Buku B',
+		 //  			gambar : 'face24.jpg'
+
+			//   	},{
+			//   		id : '3',
+		 //  			judul : 'Buku C',
+		 //  			deskripsi: 'Buku ini Buku C',
+		 //  			gambar : 'face25.jpg'
+
+			//   	}
+		 //  	],
+		   kelas :[]
+		},
+
+		//ini akan dirender dan dijalankan pada saat viewnya dibuat
+		//BELUM BERHASIL
+		//FUNGSI LIFECYCLE HOOKS, fungsi create, mounted, dan before created dipanggil ketika browser pertama kali reload halaman
+		created() {
+			// alert("dsg")
+			// ambil data dari LOCALSTORAGE
+			// var datas = JSON.parse(localStorage.getItem("kelas"))
+			// this.kelas = datas || []
+
+			// AMBIL DATA DARI DATABASE FIREBASE
+			kelasRef.on('value' , this.resultData, this.errorData)
+			//didalam metode on ada 3 parameter yaitu value, funtion berhasil, function error
+		},
+		// beforeCreate(){
+		// 	console.log('before-create')
+		// },
+		// mounted(){
+		// 	console.log('mounted')
+		// },
+		// updated(){
+		// 	console.log('updated')
+		// },
+		methods : {
+
+			resultData(items){
+				this.kelas =[]
+				// console.log("items",items.val())
+
+				// render data firebase
+				items.forEach((item) => {
+					let data = {
+						id: item.key,
+						judul: item.val().judul ,
+						deskripsi: item.val().deskripsi,
+						gambar : item.val().gambar
+					}
+					this.kelas.push(data)
+					// console.log("items",item.val())
+				})
+			},
+			errorData(error){
+				console.log("error",error)
+			},
+			//emit custom events
+			hapuskelas : function(id){
+				console.log(id)
+				// this.kelas = this.kelas.filter(item => item.id != id)
+				// this.kelas.splice(index, 1)
+				// localStorage.setItem('kelas', JSON.stringify (this.kelas))
+
+
+				db.ref('/kelas/' +id).remove()
+				//sweet alert js
+				swal({
+					text : 'Data kelas berhasil dihapus',
+					icon : 'warning'
+				})
+			},
+
+			//untukm menyimpan data
+			submitkelas : function(data){
+				
+				// console.log(data)
+				// var target = event.target.value
+
+				// simpan data di local storage
+				// this.kelas.push(data)
+				// localStorage.setItem('kelas', JSON.stringify (this.kelas))
+
+				// simpan data didatabase firebase
+				kelasRef.push({
+					judul :data.judul,
+					deskripsi :data.deskripsi,
+					gambar : data.gambar
+				})
+
+				swal({
+					title : data.judul,
+					text : 'Data kelas berhasil disimpan',
+					icon : 'success'
+				})
+
+			}
+		},
+
+
+		computed : {
+		}
+    })
+
+
+	// sama saja dengan el : '#app', ini untuk mendefinisikan elemen
+    // vm.$mount('#app')
+
+
+</script>
+</body>
+</html>

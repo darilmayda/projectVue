@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Belajar Vue JS</title>
+</head>
+<style type="text/css">
+	.active {
+		background: salmon;
+		border: 0;
+		padding: 5px
+	}
+	.header {
+		height: 50px;
+        background: #bddbc3;
+        display: flex
+	}
+</style>
+<body>
+
+<div id="app">
+
+	<!--memanggil komponen header -->
+	<header-component nama="VueJs" image='image/Vue.png'></header-component>
+	<nav>
+		<router-link to="/">Home</router-link>
+    	<router-link to="/about">About</router-link>
+    	<router-link to="/kelas">Kelas</router-link>
+	</nav>
+
+	<main>
+		 <!-- induk komunikasi ke anak melakukan sintax properti -->
+		<!-- <kelas-component v-bind:items="kelas" :input="kelasbaru" v-on:hapuskelas="hapuskelas"></kelas-component> -->
+
+		<!-- emit submit data -->
+<!-- 		<kelas-component v-bind:items="kelas" v-on:submitkelas="submitkelas" v-on:hapuskelas="hapuskelas"></kelas-component>
+		<home></home> -->
+
+		<!-- singlepage application bisa mengubah"konten-->
+		<router-view v-bind:items="kelas" v-on:submitkelas="submitkelas" v-on:hapuskelas="hapuskelas"></router-view>
+	</main>
+
+	<!--memanggil komponen footer -->
+	<footer-component>
+		Copyright 2021 - darilmayda
+	</footer-component>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script>
+
+	const home = {
+		template : '<div>Home</div>'
+	}
+	const about = {
+		template : '<div>About</div>'
+	}
+	const kelas = {
+		props : ['items', 'input'],
+		template :
+		`<div>
+			<h3>Form Input</h3>
+			<p><input type="text" placeholder="Nama Kelas" v-on:keyup.enter="$emit('submitkelas', $event)"></p>
+			<hr>
+			<p>Daftar kelas {{items.length}}</p>
+			<template v-if="items.length">
+				<ul>
+					<li v-for="(item, index) of items" >{{index + 1}} : {{item}}
+					<a href="" v-on:click.prevent="$emit('hapuskelas', index)">Delete</a>
+					</li>
+				</ul>
+			</template>
+			<li v-else>kelas undefined</li>
+		</div>`,
+		data : function (){
+			return {
+				numbers : [1,2,3,4,5],
+			  	kelas : ["kelas A", "Kelas B", "Kelas C"],
+			  	kelasbaru : " "
+			}
+		},
+		methods : {
+			// submit : function(){
+		 //  		this.kelas.unshift(this.kelasbaru)
+		 //  		this.kelasbaru = ""
+		 //  	}
+		}
+	}
+	//mendaftakan komponen pada vuejs
+	Vue.component('header-component',{
+		// properti bisa lebih dari 1kali
+		props : ['nama', 'image'],
+		template: `
+		<header>
+			<template>
+			  <div id="header" class="header">
+			      <img :src="image" width="50" height="50">
+			      <h3>Projek Daril Mayda</h3>
+			      <div>
+			        <button v-bind:class="{active:menu === 'home'}" v-on:click.prevent="gantimenu('home')" href="#">Home</button>
+					<button v-bind:class="{active:menu === 'about'}" v-on:click.prevent="gantimenu('about')" href="#">About</button>
+					<button v-bind:class="{active:menu === 'blog'}" v-on:click.prevent="gantimenu('blog')" href="#">Blog</button>
+			      </div>
+			      	
+			  </div>
+			  <p>{{'hello,' +nama}}</p>
+			</template>
+		</header>`,
+
+		data : function(){
+			return {
+				pesan : 'Hello, component!',
+				menu : 'home'
+			}
+		},
+		methods : {
+		    gantimenu : function(menux, event){
+		  		this.menu = menux
+		  	},
+		}
+	})
+
+
+	Vue.component('footer-component', {
+		//slot untuk memanggil text diantara tag
+		template:
+		`<footer id="footer">
+		<slot></slot>
+			
+		</footer>`
+	})
+
+	//komponen anak untuk berkomunikasi memakai $emit
+	// Vue.component('kelas-component',{
+	// 	// props : ['items', 'input'],
+	// 	// template :
+	// 	// `<div>
+	// 	// 	<h3>Form Input</h3>
+	// 	// 	<p><input type="text" placeholder="Nama Kelas" v-on:keyup.enter="$emit('submitkelas', $event)"></p>
+	// 	// 	<hr>
+	// 	// 	<p>Daftar kelas {{items.length}}</p>
+	// 	// 	<template v-if="items.length">
+	// 	// 		<ul>
+	// 	// 			<li v-for="(item, index) of items" >{{index + 1}} : {{item}}
+	// 	// 			<a href="" v-on:click.prevent="$emit('hapuskelas', index)">Delete</a>
+	// 	// 			</li>
+	// 	// 		</ul>
+	// 	// 	</template>
+	// 	// 	<li v-else>kelas undefined</li>
+	// 	// </div>`,
+	// 	// data : function (){
+	// 	// 	return {
+	// 	// 		numbers : [1,2,3,4,5],
+	// 	// 	  	kelas : ["kelas A", "Kelas B", "Kelas C"],
+	// 	// 	  	kelasbaru : " "
+	// 	// 	}
+	// 	// },
+	// 	// methods : {
+	// 	// 	// submit : function(){
+	// 	//  //  		this.kelas.unshift(this.kelasbaru)
+	// 	//  //  		this.kelasbaru = ""
+	// 	//  //  	}
+	// 	// }
+	// })
+
+	//ROUTER KONFIGURASI
+	const routes = [
+	  { path: '/', component: home },
+	  { path: '/about', component: about },
+	  { path: '/kelas', component: kelas }
+	]
+
+	const router = new VueRouter({
+	  //history mode untuk merapikan url
+	  mode: 'history',
+	  routes // short for `routes: routes`
+	})
+
+	const member = {
+		name : 'Daril Mayda',
+		gambar : 'image/Vue.png',
+	  	numbers : [1,2,3,4,5],
+	  	kelas : ["kelas A", "Kelas B", "Kelas C"],
+	  	kelasbaru : " "
+
+	}
+
+	//komponen Induk
+	const vm = new Vue({
+		el : '#app',
+		router,
+		components :{
+			'home' : home
+		},
+		data : member,
+		methods : {
+			//emit custom events
+			hapuskelas : function(index){
+				// console.log(index)
+				this.kelas.splice(index, 1)
+			},
+			submitkelas : function(event){
+				// console.log(event)
+				var target = event.target.value
+				this.kelas.unshift(target)
+			}
+		},
+
+		computed : {
+		}
+    })
+
+
+</script>
+</body>
+</html>

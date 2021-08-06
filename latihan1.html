@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Belajar Vue JS</title>
+</head>
+<style type="text/css">
+	.active {
+		background: salmon;
+		border: 0;
+		padding: 5px
+	}
+</style>
+<body>
+
+<div id="app">
+	<header>
+		<!-- DIRECTIVE-->
+		<h1 v-text='name'></h1>
+		<img v-bind:src="gambar" width="200" height="200">
+		<!-- <p><input type="text" v-model="name"></p> -->
+		<h3>Form Submit</h3>
+		<!-- key modifier -->
+		<p><input type="text" placeholder="Nama Kelas" v-on:keyup.enter="submit" v-model="kelasbaru" ></p>
+		<p>Daftar kelas {{kelas.length}}</p>
+
+		<!-- ELEMEN TEMPLATE -->
+		<template v-if="kelas.length > 1">
+			<ul>
+				<li v-for="(item, index) of kelas" >{{index + 1}} : {{item}}</li>
+			</ul>
+		</template>
+		<!-- <ul v-show="kelas.length > 1"> biasanya untuk menyebunyikan gambar dkk -->
+	<!-- 	<ul v-if="kelas.length > 1">perulangan v-for  ; huruf k untuk nama alias bisa apa saja
+
+		   directive v-for
+		    <li v-for="k in kelas" v-text="k">
+				v-text="k" akan melakukan perulangan yang dilakukan oleh for
+			</li>
+			directive v-for END
+
+			mengakses index 
+			 <p style="color: blue;">index mulai dari 0</p>
+		    <li v-for="(item, index) of kelas" >{{index}} : {{item}}</li>
+		    <p style="color: blue;">index mulai dari 1</p>
+		    <li v-for="(item, index) of kelas" >{{index + 1}} : {{item}}</li>
+		   mengakses index END
+		</ul> -->
+		<li v-else>kelas undefined</li>
+<!-- 		elemen v-else harus berada setelah elemen v-if tidak boleh ada pembatas meskipun div atau tag apapun -->
+
+		<h3>Perulangan angka</h3>
+		<ul>
+			<li v-for="x in 4" v-text="x"></li>
+		</ul>
+
+		<h3>Bilangan genap dari : {{numbers}}</h3>
+		<ul>
+			<li v-for="x in numbersmethod(numbers)" v-text="x"></li>
+		</ul>
+
+		
+		<p style="color: blue;">Two Way Binding</p>
+		<p>{{kelas}}</p>
+		<div>
+			<label><input type="checkbox" value="React" v-model="kelas">React</label>
+			<label><input type="checkbox" value="VueJs" v-model="kelas">VueJs</label>
+			<label><input type="checkbox" value="Angular" v-model="kelas">Angular</label>
+		</div>
+		<!-- <h1 v-text='bilangan'></h1> 
+		<p>This number is {{infoBilangan}}</p> -->
+	<!-- 	<p>
+			<button v-on:click="handleClik">Submit</button> v-on digunakan untuk button bisa menggunakan v-on atau @click
+			<button @click="handleClik">Submit</button>
+		</p> -->
+		<!-- <h1 v-html='link'></h1>  --><!-- untuk konten yang berkaitan dengan html -->
+		<!-- <h1 v-once>{{name}}</h1> -->
+		<!-- 	attribute directive pada vue untuk menonaktifkan akses edit pada console yaitu v-once -->
+		<!-- <h1 v-text='name.toUpperCase()'></h1>  -->
+		<!-- END DIRECTIVE-->
+
+		<!-- <h1>{{ getname() }}</h1>  --><!-- method vue -->
+		<!-- <p>This number is {{infoBilangan}}</p>  --><!-- opperator tannary -->
+		<!-- <h1>{{ isactive ? 'success' : 'danger' }}</h1> tanda tanya benar , titik dua false -->
+		<!-- <h1>{{name.toUpperCase() }}</h1> expression javascript vue -->
+		<!-- <h1>{{name + 'yuhu' }}</h1> expression javascript vue -->
+	<!-- 	interpolation / template sintax -->
+	<!-- 	system reactive mengubah halaman secara langsung didalam object vuenya-->
+
+	<!-- class Binding -->
+<!-- 	event  v-on:click ketika diklik bisa mengubah yang sesuai kita inginkan -->
+		<!-- <p style="color: blue;">Class Binding</p>
+		<button v-bind:class="{active:menu === 'home'}" v-on:click="menu = 'home'">Home</button>
+		<button v-bind:class="{active:menu === 'about'}" v-on:click="menu = 'about'">About</button>
+		<button v-bind:class="{active:menu === 'blog'}" v-on:click="menu = 'blog'">Blog</button> -->
+	<!-- class Binding END -->
+
+	<p style="color: blue;">Object Event</p>
+<!-- 	$event global disini digunakan agar apabila diklik tidak keredirect atau relaod -->
+<!-- 		$eventglobal START
+		<a v-bind:class="{active:menu === 'home'}" v-on:click="gantimenu('home', $event)" href="#">Home</a>
+		<a v-bind:class="{active:menu === 'about'}" v-on:click="gantimenu('about', $event)" href="#">About</a>
+		<a v-bind:class="{active:menu === 'blog'}" v-on:click="gantimenu('blog' , $event)" href="#">Blog</a>
+		$eventglobal END -->
+
+
+	<!-- 	EVENT MODIFIER VUE JS START -->
+		<a v-bind:class="{active:menu === 'home'}" v-on:click.prevent="gantimenu('home')" href="#">Home</a>
+		<a v-bind:class="{active:menu === 'about'}" v-on:click.prevent="gantimenu('about')" href="#">About</a>
+		<a v-bind:class="{active:menu === 'blog'}" v-on:click.prevent="gantimenu('blog')" href="#">Blog</a>
+<!-- 		EVENT MODIFIER END -->
+	</header>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script>
+	const member = {
+		name : 'Daril Mayda',
+	  	username : 'darilmayda',
+	  	qty : 2,
+	  	namaDepan : 'Daril',
+	  	namaBelakang : 'Mayda',
+	  	bilangan : 4,
+	  	link : '<a href="">next</a>',
+	  	gambar : 'image/Vue.png',
+	  	menu : 'home',
+	  	kelas : ["kelas A", "Kelas B", "Kelas C"],
+	  	numbers : [1,2,3,4,5],
+	  	kelasbaru : " "
+	  	// isactive : true
+	}
+	// new Vue()  wajib untuk mengatur keseluruhan data tetapi belum global
+	//const vm = new Vue({}) bersifat globak
+	const vm = new Vue({
+		el : '#app', //menentukan element mana yang dijadikan sebagai wadah komponen komponen, id app berarti sebagai root komponen, properti el untuk elemennya
+		data : member,
+		  // data : { //properti data untuk datanya
+		  // 	//string, number, boolean, array, object
+		  // 	name : 'Daril Mayda',
+		  // 	username : 'darilmayda'
+		  // }
+
+		  //method vue bisa lebih dari 1, sama dengan data tinggal dipisahkan dengan koma
+		  //dalam 1 fungsi atau methods bisa memiliki paramenter (data atau nilai yang bisa diakses dalam 1 fungsi)
+		methods : {
+		  	getname : function(){
+		  		return 'Hello, ' + this.name
+		  	},
+
+		  	//parameter vue
+		  	editname :  function(NewName){
+		  	    this.name = NewName
+		  	    return this.getname()
+		  	},
+
+		  	//event pada vuejs
+		  	handleClik : function(){
+		  		this.bilangan++
+		  		this.gambar = 'image/img.png'
+		  	},
+
+		  	//directive for
+		  	numbersmethod : function(numberx){
+		  		return numberx.filter(angka => {
+		  			return angka % 2 == 0 
+		  			//apakah angka dibagi 2 = 0 kalau iya berarti genap
+		  		})
+		  	},
+
+		  	//merubah data menu sesuai dengan navigasi yang diklik
+		  	gantimenu : function(menux, event){
+		  		// event.preventDefault()
+		  		// console.log(event)
+		  		this.menu = menux
+		  		//menux tergantung argumen yang dikirimkan
+		  	},
+
+		  	//key modifier
+		  	submit : function(e){
+		  		//pada input bidning tidak perlu menggunakan event
+		  		// let text = e.target.value
+		  		// console.log(text)
+		  		// this.kelas.push(text)
+
+		  		//metode form input binding
+		  		this.kelas.unshift(this.kelasbaru)
+		  		// unshift membuat data berada pada index pertama
+		  		// e.target.value = ""
+		  		this.kelasbaru = ""
+		  		//metode form input binding
+		  	}
+		},
+
+		//computed property menyederhanakan sebuah statement/argument yang ditulis. disederhanakan dalam 1 fungsi lalu dipanggil.
+		computed : {
+			totalBayar : function(){
+				return this.qty * 12000
+			},
+			namaLengkap : function(){
+				return this.namaDepan + this.namaBelakang
+			},
+			infoBilangan : function(){
+				return this.bilangan %2 === 0 ? 'even' : 'odd'
+			}
+		}
+    })
+
+
+</script>
+</body>
+</html>
